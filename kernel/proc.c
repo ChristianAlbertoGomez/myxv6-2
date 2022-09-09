@@ -654,3 +654,52 @@ procdump(void)
     printf("\n");
   }
 }
+
+//Christian A. Gomez Code
+
+//delcrae uproc streuc
+struct uproc
+{
+ int pid;
+ enum procstate state;
+ uint64 size;
+ int ppid;
+ char name[16];
+};
+
+//Procinfo() method
+int procinfo(uint64 address)
+{
+
+  int counter = 0;
+  struct proc *p = myproc();
+
+  struct proc *p2;
+  struct uproc up;
+
+  for(p2 = proc; p2 < &proc[NPROC]; p2++){
+
+     if(p2->state == UNUSED){
+        continue;
+     }
+
+     up.pid = p2->pid;
+     up.state = p2->state;
+     up.size = p2->sz;
+     if(p2->parent==0){
+         up.ppid = 0;
+      }else{
+         up.ppid = p2->parent->pid;
+      }
+
+     if(copyout(p->pagetable, address,(char *)&up,sizeof(up)) < 0){
+         return -1;
+      }
+     else{
+        counter++;
+        address = address + sizeof(up);
+
+     }
+  }
+  return counter;
+}
