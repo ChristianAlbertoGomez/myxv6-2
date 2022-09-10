@@ -686,6 +686,10 @@ int procinfo(uint64 address)
      up.pid = p2->pid;
      up.state = p2->state;
      up.size = p2->sz;
+     up.name[16] = p2->name[16];
+
+     safestrcpy(up.name, p2->name, strlen(p2->name)+1);
+
      if(p2->parent==0){
          up.ppid = 0;
       }else{

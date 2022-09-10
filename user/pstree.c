@@ -6,20 +6,31 @@
 struct uproc uproc[NPROC];
 int nprocs;
 
+void myPrint(char* name){
+   printf(" ");
+   printf(" ");
+   printf("%s \n",name);
+}
+
 // helper function to output the process tree rooted at pid
 // calls itself recursively on any children of pid
 void mktree(int indent, int pid)
 {
 
+  int i = 0;
+  for(; i < nprocs; i++){
+    if(uproc[i].pid == pid){
+       break;
+    }
+  }
 
+   myPrint(uproc[i].name);
 
-
-
-
-
-
-
-
+  if(pid<=nprocs){
+     pid++;
+     indent++;
+     mktree(0,pid);
+  }
   return;
 }
 
@@ -37,5 +48,6 @@ main(int argc, char **argv)
   printf("%d processes\n", nprocs);
 
   mktree(0, pid);
+
   exit(0);
 }
