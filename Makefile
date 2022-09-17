@@ -136,6 +136,7 @@ UPROGS=\
 	$U/_ps\
 	$U/_pstest\
 	$U/_pstree\
+	$U/_matmul\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
