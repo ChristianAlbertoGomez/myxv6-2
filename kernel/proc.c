@@ -698,3 +698,49 @@ int procinfo(uint64 address)
   }
   return counter;
 }
+
+//Christian A. Gomez Code Wait2() method
+int wait2(uint64 p1, uint64 p2){
+  struct proc *np;
+  int havekids, pid;
+  struct proc *p = myproc();
+  struct rusage ru; //Christian Gomez
+
+  acquire(&wait_lock);
+  for(;;){
+    havekids = 0;
+    for(np = proc; np < &proc[NPROC]; np++){
+      if(np->parent == p){
+        acquire(&np->lock);
+        havekids = 1;
+
+        if(np->state == ZOMBIE){
+          ru.cputime = np->cputime;//Christian A. Gomez
+          pid = np->pid;
+          //Christian Gomez if-statement
+          if(p2!=0&&copyout(p->pagetable,p2,(char*)&ru,sizeof(ru))<0){
+            release(&np->lock);
+            release(&wait_lock);
+            return -1;
+          }
+          if(p1 != 0 &&copyout(p->pagetable, p1, (char*)&np->xstate, sizeof(np->xstate)) < 0){
+            release(&np->lock);
+            release(&wait_lock);
+            return -1;
+          }
+          freeproc(np);
+          release(&np->lock);
+          release(&wait_lock);
+          return pid;
+        }
+        release(&np->lock);
+      }
+    }
+    if(!havekids || p->killed){
+      release(&wait_lock);
+      return -1;
+    }
+    sleep(p, &wait_lock);
+  }
+
+}

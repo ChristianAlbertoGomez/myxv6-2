@@ -23,3 +23,4 @@
 #define SYS_getprocs 22
 #define SYS_pstest  23
 #define SYS_pstree  24
+#define SYS_wait2  25
