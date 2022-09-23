@@ -5,6 +5,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "defs.h"
+#include "pstat.h"
 
 struct cpu cpus[NCPU];
 
@@ -119,6 +120,7 @@ allocproc(void)
 found:
   p->pid = allocpid();
   p->state = USED;
+  p->cputime = 0; //Christian Gomez edit
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -655,18 +657,6 @@ procdump(void)
   }
 }
 
-//Christian A. Gomez Code
-
-//delcrae uproc streuc
-struct uproc
-{
- int pid;
- enum procstate state;
- uint64 size;
- int ppid;
- char name[16];
-};
-
 //Procinfo() method
 int procinfo(uint64 address)
 {
@@ -687,6 +677,7 @@ int procinfo(uint64 address)
      up.state = p2->state;
      up.size = p2->sz;
      up.name[16] = p2->name[16];
+     up.cputime = p2->cputime;
 
      safestrcpy(up.name, p2->name, strlen(p2->name)+1);
 

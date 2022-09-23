@@ -3,7 +3,7 @@
  */
 #include "kernel/param.h"
 #include "kernel/types.h"
-#include "user/uproc.h"
+#include "kernel/pstat.h"
 #include "user/user.h"
 
 int
@@ -37,8 +37,8 @@ main(int argc, char **argv)
   for(int i = 0; i < nprocs; i++){
 
     state = states[uproc[i].state];
-    printf("pid:%d state:%s size:%d ppid:%d name:%s\n",uproc[i].pid,state,
-            uproc[i].size,uproc[i].ppid,uproc[i].name);
+    printf("pid:%d state:%s size:%d ppid:%d name:%s cputime:%d\n",uproc[i].pid,state,
+            uproc[i].size,uproc[i].ppid,uproc[i].name,uproc[i].cputime);
 
     //printf("state: %s \n",state);
     //printf("size: %d \n",uproc[i].size);

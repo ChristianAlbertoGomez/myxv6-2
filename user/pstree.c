@@ -1,6 +1,6 @@
 #include "kernel/param.h"
 #include "kernel/types.h"
-#include "user/uproc.h"
+#include "kernel/pstat.h"
 #include "user/user.h"
 
 struct uproc uproc[NPROC];
