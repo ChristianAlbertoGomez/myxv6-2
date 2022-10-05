@@ -135,7 +135,14 @@ found:
   p->timeslice = 0;
   p->yielded = 0;
   p->priority = 0;
-  p->next = myproc();
+ // p->next = myproc();
+ struct proc *dummy;
+ dummy = p + 1;
+ if(dummy < &proc[NPROC]){
+   p->next = dummy;
+  }else{
+    p->next = 0;
+   }
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
