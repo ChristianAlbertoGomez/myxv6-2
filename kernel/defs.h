@@ -107,6 +107,10 @@ int             either_copyin(void *dst, int user_src, uint64 src, uint64 len);
 void            procdump(void);
 int		procinfo(uint64); //Christian Gomez Code
 int		wait2(uint64 p1,uint64 p2); //Christian Gomez Code
+void		queueinit(void); //Christian Gomez Code Task 4
+int		timeslice(int); //Christian Gomez Code Task 4
+int		queue_empty(int); //Christian Gomez Code Task 4
+
 // swtch.S
 void            swtch(struct context*, struct context*);
 

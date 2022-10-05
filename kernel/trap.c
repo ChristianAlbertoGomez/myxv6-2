@@ -79,7 +79,22 @@ usertrap(void)
   // give up the CPU if this is a timer interrupt.
   if(which_dev == 2){
     p->cputime = p->cputime + 1; //Christian Gomez: Increment CPU time
+    p->tsticks++; //Christian Gomez Task 4
     yield();
+
+    //Christian Gomez Task 4 -> usertrap() method
+   if(p->tsticks >= timeslice(p->priority)){
+        if(p->priority == HIGH){
+           p->priority = MEDIUM;
+           yield();
+         }else if(p->priority == MEDIUM){
+           p->priority = LOW;
+           yield();
+         }else{
+           p->priority = LOW;
+           yield();
+         }
+    }//if
   }
 
   usertrapret();
@@ -155,6 +170,22 @@ kerneltrap()
   if(which_dev == 2 && myproc() != 0 && myproc()->state == RUNNING){
     yield();
     myproc()->cputime++; //Christian Gomez: Increment CPU time
+    myproc()->tsticks++; //Christian Gomez: Increment Sticks
+
+    //Christian Gomez Task 4 -> kerneltrap() method
+    if(myproc()->tsticks >= timeslice(myproc()->priority)){
+       if(myproc()->priority == HIGH){
+         myproc()->priority = MEDIUM;
+         yield();
+       }else if(myproc()->priority == MEDIUM){
+          myproc()->priority = LOW;
+          yield();
+        }else{
+           myproc()->priority = LOW;
+           yield();
+         }
+    }//if
+
   }
 
   // the yield() may have caused some traps to occur,

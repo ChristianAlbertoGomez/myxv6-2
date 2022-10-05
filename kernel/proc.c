@@ -13,6 +13,15 @@ struct proc proc[NPROC];
 
 struct proc *initproc;
 
+
+//Christian Gomez Code Task 4
+int enqueue_at_tail(struct proc *p,int priority);
+int enqueue_at_head(struct proc *p,int priority);
+struct proc* dequeue(int priority);
+
+struct queue queue[NQUEUE];//Christian Gomez Task 4
+int sched_policy = MLFQ;  // Should be set to RR or MLFQ.Christian Gomez task 4
+
 int nextpid = 1;
 struct spinlock pid_lock;
 
@@ -121,6 +130,12 @@ found:
   p->pid = allocpid();
   p->state = USED;
   p->cputime = 0; //Christian Gomez edit
+
+  //Christian Gomez Task 4
+  p->timeslice = 0;
+  p->yielded = 0;
+  p->priority = 0;
+  p->next = myproc();
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -246,6 +261,9 @@ userinit(void)
 
   p->state = RUNNABLE;
 
+  //Christian Gomez Task 4 ->userinit() method
+  enqueue_at_tail(p,p->priority);
+
   release(&p->lock);
 }
 
@@ -315,6 +333,10 @@ fork(void)
 
   acquire(&np->lock);
   np->state = RUNNABLE;
+
+  //Christian Gomez Task 4 ->fork() method
+  enqueue_at_tail(np,np->priority);
+
   release(&np->lock);
 
   return pid;
@@ -441,7 +463,12 @@ scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
-  
+
+  //Christian Gomez Task 4 -> Scheduler method
+  if(sched_policy == MLFQ){
+     p = dequeue(HIGH);
+   }
+
   c->proc = 0;
   for(;;){
     // Avoid deadlock by ensuring that devices can interrupt.
@@ -456,6 +483,8 @@ scheduler(void)
         p->state = RUNNING;
         c->proc = p;
         swtch(&c->context, &p->context);
+        //Christian Gomez Code TAsk 4 ->Scheduler Method
+        p->tsticks = 0; 
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
@@ -500,6 +529,11 @@ yield(void)
   struct proc *p = myproc();
   acquire(&p->lock);
   p->state = RUNNABLE;
+
+  //Christian Gomez Code Task 4 -> yield() method
+  enqueue_at_tail(p,p->priority);
+
+
   sched();
   release(&p->lock);
 }
@@ -568,6 +602,8 @@ wakeup(void *chan)
       acquire(&p->lock);
       if(p->state == SLEEPING && p->chan == chan) {
         p->state = RUNNABLE;
+        //Christian Gomez Task 4 -> wakeup() method
+       enqueue_at_tail(p,p->priority);
       }
       release(&p->lock);
     }
@@ -589,6 +625,8 @@ kill(int pid)
       if(p->state == SLEEPING){
         // Wake process from sleep().
         p->state = RUNNABLE;
+        //Christian Gomez Task 4 ->Kill() method
+        enqueue_at_head(p,p->priority);
       }
       release(&p->lock);
       return 0;
@@ -678,6 +716,7 @@ int procinfo(uint64 address)
      up.size = p2->sz;
      up.name[16] = p2->name[16];
      up.cputime = p2->cputime;
+     up.priority = p2->priority; //Task 4
 
      safestrcpy(up.name, p2->name, strlen(p2->name)+1);
 
@@ -744,3 +783,132 @@ int wait2(uint64 p1, uint64 p2){
   }
 
 }
+
+//Christian Gomez Code Task 4
+
+// Initializes scheduler queues
+// Call from main() after call to procinit()
+void
+queueinit(void)
+{
+  struct queue *q;
+  int i = 0;
+
+  for (q = queue; q < &queue[NQUEUE]; q++) {
+    initlock(&q->lock, "queue");
+    if (i == 0)
+      q->timeslice = TSTICKSHIGH;
+    else if (i == 1)
+      q->timeslice = TSTICKSMEDIUM;
+    else
+      q->timeslice = TSTICKSLOW;
+    q->head = 0;
+    q->tail = 0;
+    i++;
+  }
+}
+
+int timeslice(int priority)
+{
+   if (priority == HIGH)
+     return(TSTICKSHIGH);
+   else if (priority == MEDIUM)
+     return(TSTICKSMEDIUM);
+   else if (priority == LOW)
+     return(TSTICKSLOW);
+   else {
+     printf("timeslice: invalid priority %d\n", priority);
+     return(-1);
+   }
+}
+
+int
+queue_empty(int priority)
+{
+  if (!queue[priority].head)
+    return(1);
+  return(0);
+}
+
+int
+enqueue_at_tail(struct proc *p, int priority)
+{
+  if (!(p >= proc && p < &proc[NPROC]))
+          panic("enqueue_at_tail");
+  if (!(priority >= 0) && (priority < NQUEUE))
+          panic("enqueue_at_tail");
+  acquire(&queue[priority].lock);
+  if ((queue[priority].head == 0) && (queue[priority].tail == 0)) {
+    queue[priority].head = p;
+    queue[priority].tail = p;
+    release(&queue[priority].lock);
+    return(0);
+  }
+  if (queue[priority].tail == 0) {
+          release(&queue[priority].lock);
+          panic("enqueue_at_tail");
+  }
+  queue[priority].tail->next = p;
+  queue[priority].tail = p;
+  release(&queue[priority].lock);
+  return(0);
+}
+
+// Enqueues process p at the head of the scheduler queue with priority == priority
+// p->lock should be held on entry except for initial enqueue of init
+int
+enqueue_at_head(struct proc *p, int priority)
+{
+  if (!(p >= proc && p < &proc[NPROC]))
+          panic("enqueue_at_head");
+  if (!(priority >= 0) && (priority < NQUEUE))
+          panic("enqueue_at_head");
+  acquire(&queue[priority].lock);
+  if ((queue[priority].head == 0) && (queue[priority].tail == 0)) {
+    queue[priority].head = p;
+    queue[priority].tail = p;
+    release(&queue[priority].lock);
+    return(0);
+  }
+  if (queue[priority].head == 0) {
+    release(&queue[priority].lock);
+    panic("enqueue_at_head");
+  }
+  p->next = queue[priority].head;
+  queue[priority].head = p;
+  release(&queue[priority].lock);
+  return(0);
+}
+
+
+
+struct proc*
+dequeue(int priority)
+{
+  struct proc *p;
+
+  if (!(priority >= 0) && (priority < NQUEUE)) {
+          printf("dequeue: invalid argument %d\n", priority);
+          return(0);
+  }
+  acquire(&queue[priority].lock);
+  if ((queue[priority].head == 0) && (queue[priority].tail == 0)) {
+   // printf("empty queue\n");
+    release(&queue[priority].lock);
+    return(0);
+  }
+  if (queue[priority].head == 0) {
+    release(&queue[priority].lock);
+    panic("dequeue");
+  }
+  p = queue[priority].head;
+  acquire(&p->lock);
+  queue[priority].head = p->next;
+  p->next = 0;
+  release(&p->lock);
+  if (!queue[priority].head)
+    queue[priority].tail = 0;
+  release(&queue[priority].lock);
+  return(p);
+}
+
