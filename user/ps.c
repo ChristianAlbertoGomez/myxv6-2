@@ -16,7 +16,6 @@ main(int argc, char **argv)
    * Add any additional variables or data structures you will need
    ********************************/
 
-  int hola = 0;//Just to fix my git 
   static char *states[] = {
    [UNUSED]    "unused",
    [SLEEPING]  "sleep ",
