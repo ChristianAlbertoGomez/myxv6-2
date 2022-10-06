@@ -602,7 +602,8 @@ wakeup(void *chan)
       if(p->state == SLEEPING && p->chan == chan) {
         p->state = RUNNABLE;
         //Christian Gomez Task 4 -> wakeup() method
-       enqueue_at_tail(p,p->priority);
+         enqueue_at_head(p,p->priority);
+      // enqueue_at_tail(p,p->priority);
       }
       release(&p->lock);
     }
