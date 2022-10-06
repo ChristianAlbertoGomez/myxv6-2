@@ -130,19 +130,11 @@ found:
   p->pid = allocpid();
   p->state = USED;
   p->cputime = 0; //Christian Gomez edit
-
   //Christian Gomez Task 4
-  p->timeslice = 0;
+  p->timeslice = TSTICKSHIGH;
   p->yielded = 0;
   p->priority = 0;
- // p->next = myproc();
- struct proc *dummy;
- dummy = p + 1;
- if(dummy < &proc[NPROC]){
-   p->next = dummy;
-  }else{
-    p->next = 0;
-   }
+  p->next = 0;
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
