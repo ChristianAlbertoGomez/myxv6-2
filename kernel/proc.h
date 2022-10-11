@@ -109,7 +109,7 @@ struct proc {
   uint     timeslice;          // scheduling timeslice
   int     yielded;          // 1 if this process yielded to a higher priority process before using its timeslice
   struct proc *next;    // next process in scheduler queue
-
+  int  arrtime; //Task 4
 };
 
 //Christian Gomez Code Task 4

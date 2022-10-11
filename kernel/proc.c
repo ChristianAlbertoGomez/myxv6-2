@@ -131,9 +131,9 @@ found:
   p->state = USED;
   p->cputime = 0; //Christian Gomez edit
   //Christian Gomez Task 4
-  p->timeslice = TSTICKSHIGH;
+  p->timeslice = 0;//TSTICKSHIGH;
   p->yielded = 0;
-  p->priority = 0;
+  p->priority = HIGH;
   p->next = 0;
 
   // Allocate a trapframe page.
@@ -464,32 +464,54 @@ scheduler(void)
   struct cpu *c = mycpu();
 
   //Christian Gomez Task 4 -> Scheduler method
-  if(sched_policy == MLFQ){
-     p = dequeue(HIGH);
-   }
+ // if(sched_policy == MLFQ){
+   //  p = dequeue(HIGH);
+   //}
 
   c->proc = 0;
   for(;;){
     // Avoid deadlock by ensuring that devices can interrupt.
     intr_on();
 
-    for(p = proc; p < &proc[NPROC]; p++) {
-      acquire(&p->lock);
-      if(p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
+    if(sched_policy == RR){
+      for(p = proc; p < &proc[NPROC]; p++) {
+        acquire(&p->lock);
+        if(p->state == RUNNABLE) {
+          // Switch to chosen process.  It is the process's job
+          // to release its lock and then reacquire it
+          // before jumping back to us.
+          p->state = RUNNING;
+          c->proc = p;
+          swtch(&c->context, &p->context);
+          //Christian Gomez Code TAsk 4 ->Scheduler Method
+           p->tsticks = 0; 
+
+          // Process is done running for now.
+          // It should have changed its p->state before coming back.
+          c->proc = 0;
+        }
+        release(&p->lock);
+      }
+    }else if(sched_policy == MLFQ){
+     // struct proc *p2;
+      p = dequeue(HIGH);
+
+      if(!p){
+        p = dequeue(MEDIUM);
+       }
+      if(!p){
+        p = dequeue(LOW);
+       }
+
+      if(p){
+        acquire(&p->lock);
+        p->tsticks = 0;
         p->state = RUNNING;
         c->proc = p;
-        swtch(&c->context, &p->context);
-        //Christian Gomez Code TAsk 4 ->Scheduler Method
-        p->tsticks = 0; 
-
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-      }
-      release(&p->lock);
+        swtch(&c->context,&p->context);
+        c->proc=0;
+        release(&p->lock);
+      }//if
     }
   }
 }
@@ -717,6 +739,7 @@ int procinfo(uint64 address)
      up.name[16] = p2->name[16];
      up.cputime = p2->cputime;
      up.priority = p2->priority; //Task 4
+     up.arrtime = p2->arrtime; //Task 4
 
      safestrcpy(up.name, p2->name, strlen(p2->name)+1);
 

@@ -34,10 +34,12 @@ main(int argc, char **argv)
   // You can remove the following print statement
   printf("%d processes\n", nprocs);
 
+  printf("pid\tstate\tsize\tppid\tname\tcputime\tpriority\n");
+
   for(int i = 0; i < nprocs; i++){
 
     state = states[uproc[i].state];
-    printf("pid:%d state:%s size:%d ppid:%d name:%s cputime:%d priority:%d\n",uproc[i].pid,state,
+    printf("%d\t%s\t%d\t%d\t%s\t%d\t%d\n",uproc[i].pid,state,
             uproc[i].size,uproc[i].ppid,uproc[i].name,uproc[i].cputime,uproc[i].priority);
 
     //printf("state: %s \n",state);

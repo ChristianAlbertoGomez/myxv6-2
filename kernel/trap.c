@@ -78,9 +78,9 @@ usertrap(void)
 
   // give up the CPU if this is a timer interrupt.
   if(which_dev == 2){
-    p->cputime = p->cputime + 1; //Christian Gomez: Increment CPU time
+    p->cputime++; //Christian Gomez: Increment CPU time
     p->tsticks++; //Christian Gomez Task 4
-    yield();
+   // yield();
 
     //Christian Gomez Task 4 -> usertrap() method
    if(p->tsticks >= timeslice(p->priority)){
@@ -168,7 +168,7 @@ kerneltrap()
 
   // give up the CPU if this is a timer interrupt.
   if(which_dev == 2 && myproc() != 0 && myproc()->state == RUNNING){
-    yield();
+   // yield();
     myproc()->cputime++; //Christian Gomez: Increment CPU time
     myproc()->tsticks++; //Christian Gomez: Increment Sticks
 
