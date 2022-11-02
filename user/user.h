@@ -1,3 +1,4 @@
+#define NULL 0 //Lab 3 Task 2 Christian Gomez Code
 struct stat;
 struct rtcdate;
 struct uproc;

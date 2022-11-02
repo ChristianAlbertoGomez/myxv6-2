@@ -80,9 +80,42 @@ struct trapframe {
   /* 280 */ uint64 t6;
 };
 
+//Christian Gomez Code Lab 3 Task 2 
+// struct with lock for list of mmr family members
+struct mmr_list { 
+   struct spinlock lock;
+   int valid;
+};
+
+// struct for node in list of processes that share a mapped memory region
+struct mmr_node {
+  int       listid;                        // index into mmr_list array with per-list locks
+  struct proc *proc;              // this process so it can be found easily
+  struct mmr_node *next;  // next process in family
+  struct mmr_node *prev;  // previous process in family
+};
+
+// struct for a shared memory region
+struct mmr {
+  uint64 addr;   // starting address of the region
+  int length;       // length of the region in bytes
+  int prot;           // R/W/X permissions for pages in the region
+  int flags;          // MAP_ANONYMOUS, MAP_PRIVATE or MAP_SHARED
+  int valid;          // 1 if this entry is in use
+  struct file *file;   // not used for Lab 3
+  int fd;                   // not used for Lab 3
+  struct mmr_node mmr_family;   // my node in the mmr family
+};
+//Here finishes christian gomez code lab 3
+
+
 // Per-process state
 struct proc {
   struct spinlock lock;
+
+  //Christian Gomez Code Lab 3 Task 2
+  struct mmr_list mmr_list[NPROC*MAX_MMR];
+  struct spinlock listed_lock;
 
   // p->lock must be held when using these:
   enum procstate state;        // Process state
@@ -110,6 +143,11 @@ struct proc {
   int     yielded;          // 1 if this process yielded to a higher priority process before using its timeslice
   struct proc *next;    // next process in scheduler queue
   int  arrtime; //Task 4
+
+  //Christian Gomez Code Lab 3 Task 2
+  struct mmr mmr[MAX_MMR];     // Array of memory-mapped regions
+  uint64 cur_max;            // Max address of free virtual memory, 
+                                                            // initialize to MAXVA-2*PGSIZE
 };
 
 //Christian Gomez Code Task 4

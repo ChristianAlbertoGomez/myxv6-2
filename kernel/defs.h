@@ -110,6 +110,10 @@ int		wait2(uint64 p1,uint64 p2); //Christian Gomez Code
 void		queueinit(void); //Christian Gomez Code Task 4
 int		timeslice(int); //Christian Gomez Code Task 4
 int		queue_empty(int); //Christian Gomez Code Task 4
+struct 		mmr_list* get_mmr_list(int); //Christian Gomez Code lab 3 task 2
+int 		alloc_mmr_listid(void); //Christian Gomez Code lab 3 task 2
+void 		dealloc_mmr_listid(int); //Christian Gomez lab 3 task 2
+void            mmrlistinit(void); //Christian Gomez lab 3 task 2
 
 // swtch.S
 void            swtch(struct context*, struct context*);
@@ -176,6 +180,7 @@ uint64          walkaddr(pagetable_t, uint64);
 int             copyout(pagetable_t, uint64, char *, uint64);
 int             copyin(pagetable_t, char *, uint64, uint64);
 int             copyinstr(pagetable_t, char *, uint64, uint64);
+int             mapvpages(pagetable_t, uint64, uint64); //Lab 3 Task 2 C.G.
 
 // plic.c
 void            plicinit(void);
