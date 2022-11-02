@@ -7,6 +7,9 @@
 #include "spinlock.h"
 #include "proc.h"
 
+//Christian Gomez Code Lab 3 Task 1
+uint64 kfreepagecount(void);
+
 uint64
 sys_exit(void)
 {
@@ -116,4 +119,11 @@ sys_wait2(void){
 	return -1;
   }
   return wait2(p1, p2);
+}
+
+//Christian Gomez Code Lab 3 Task 1
+uint64
+sys_freepmem(void){
+  int count = kfreepagecount();
+  return count*PGSIZE;
 }

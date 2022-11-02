@@ -24,3 +24,5 @@
 #define SYS_pstest  23
 #define SYS_pstree  24
 #define SYS_wait2  25
+#define SYS_free  26
+#define SYS_freepmem 27

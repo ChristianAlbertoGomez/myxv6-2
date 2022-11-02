@@ -28,6 +28,7 @@ int sleep(int);
 int uptime(void);
 int getprocs(struct uproc*);
 int wait2(int*, struct rusage*);//This is my code
+int freepmem(void); //Lab 3 Task 1
 
 // ulib.c
 int stat(const char*, struct stat*);

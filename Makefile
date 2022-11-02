@@ -138,6 +138,7 @@ UPROGS=\
 	$U/_pstree\
 	$U/_matmul\
 	$U/_time\
+	$U/_free\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

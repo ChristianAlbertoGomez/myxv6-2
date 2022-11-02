@@ -39,3 +39,4 @@ entry("uptime");
 entry("getprocs");
 entry("pstest");
 entry("wait2");
+entry("freepmem");
