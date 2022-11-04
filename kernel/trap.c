@@ -65,6 +65,34 @@ usertrap(void)
     intr_on();
 
     syscall();
+    //Here I start doing Lab 3 Task 2 Code
+
+  } else if(r_scause()==13||r_scause()==15){
+     uint64 fault_addr = r_stval();
+    for(int i = 0; i < MAX_MMR; i++){
+    if(p->mmr[i].valid == 1){
+      if((fault_addr >= p->mmr[i].addr) && (fault_addr < p->mmr[i].addr + p->mmr[i].length)){
+        if(r_scause() == 13 && (p->mmr[i].prot & PTE_R)){ 
+          //Load Faults - Read
+          memset(kalloc(), 0, PGSIZE);
+          if(mappages(p->pagetable, PGROUNDDOWN(fault_addr), PGSIZE, (uint64)kalloc(), p->mmr[i].prot | PTE_U) < 0){
+            p->killed = 1;
+            exit(-1);
+          }
+        }
+        if(r_scause() == 15 && (p->mmr[i].prot & PTE_W)){ 
+          //Store Faults - Write
+          memset(kalloc(), 0, PGSIZE);
+          if(mappages(p->pagetable, PGROUNDDOWN(fault_addr), PGSIZE, (uint64)kalloc(), p->mmr[i].prot | PTE_U) < 0){
+            p->killed = 1;
+            exit(-1);
+                                        }
+          }
+        }
+      }
+    }
+    //Here it finishes
+
   } else if((which_dev = devintr()) != 0){
     // ok
   } else {

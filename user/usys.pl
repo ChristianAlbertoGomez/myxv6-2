@@ -40,3 +40,6 @@ entry("getprocs");
 entry("pstest");
 entry("wait2");
 entry("freepmem");
+entry("private");
+entry("mmap");
+entry("munmap");

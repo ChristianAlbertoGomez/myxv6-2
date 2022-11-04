@@ -198,3 +198,7 @@ void            virtio_disk_intr(void);
 
 //Christian Gomez Lab 3 Task 1
 void            freepmem(void);
+
+//Christian Gomez Lab 3 Task 2
+void *mmap(void*,uint64,int,int,int,int);
+int munmap(uint64,uint64);

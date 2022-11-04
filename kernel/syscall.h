@@ -26,3 +26,7 @@
 #define SYS_wait2  25
 #define SYS_free  26
 #define SYS_freepmem 27
+#define SYS_private  28
+#define SYS_mmap   29
+#define SYS_munmap  30
+
