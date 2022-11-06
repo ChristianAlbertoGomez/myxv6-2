@@ -43,3 +43,6 @@ entry("freepmem");
 entry("private");
 entry("mmap");
 entry("munmap");
+entry("prodcons1");
+entry("prodcons2");
+entry("prodcons3");

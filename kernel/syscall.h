@@ -29,4 +29,6 @@
 #define SYS_private  28
 #define SYS_mmap   29
 #define SYS_munmap  30
-
+#define SYS_prodcons1  31
+#define SYS_prodcons2  32
+#define SYS_prodcons3  32
