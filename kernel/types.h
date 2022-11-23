@@ -8,3 +8,6 @@ typedef unsigned int  uint32;
 typedef unsigned long uint64;
 
 typedef uint64 pde_t;
+
+//Christian Gomez Lab 4 task 2
+typedef int sem_t;

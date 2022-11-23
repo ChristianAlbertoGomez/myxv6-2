@@ -27,3 +27,6 @@
 #define MAX_MMR	10   // maximum number of memory-mapped regions per process
 
 enum procstate {UNUSED,USED,SLEEPING,RUNNABLE,RUNNING,ZOMBIE};
+
+//Christian Gomez Lab 4 Task 2
+#define NSEM        100 //maximum open sempahores per system

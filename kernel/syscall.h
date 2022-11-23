@@ -32,3 +32,7 @@
 #define SYS_prodcons1  31
 #define SYS_prodcons2  32
 #define SYS_prodcons3  32
+#define SYS_sem_init  33
+#define SYS_sem_destroy  34
+#define SYS_sem_wait  35
+#define SYS_sem_post  36

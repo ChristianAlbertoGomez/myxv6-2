@@ -22,6 +22,7 @@ main()
     procinit();      // process table
     queueinit();     // Christian Gomez Code Task 4->main.c
     mmrlistinit();   // Christian Gomez Code Lab 3 Task 2
+    seminit();       // Christian Gomez Lab 4 Task 2
     trapinit();      // trap vectors
     trapinithart();  // install kernel trap vector
     plicinit();      // set up interrupt controller

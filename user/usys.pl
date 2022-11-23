@@ -46,3 +46,7 @@ entry("munmap");
 entry("prodcons1");
 entry("prodcons2");
 entry("prodcons3");
+entry("sem_init");
+entry("sem_destroy");
+entry("sem_wait");
+entry("sem_post");

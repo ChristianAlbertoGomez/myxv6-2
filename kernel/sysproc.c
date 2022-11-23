@@ -127,3 +127,24 @@ sys_freepmem(void){
   int count = kfreepagecount();
   return count*PGSIZE;
 }
+
+//Christian Gomez Code lab 4
+uint64
+sys_sem_init(void){
+  return 0;
+}
+
+uint64
+sys_sem_destroy(void){
+  return 0;
+}
+
+uint64
+sys_sem_wait(void){
+  return 0;
+}
+
+uint64
+sys_sem_post(void){
+  return 0;
+}

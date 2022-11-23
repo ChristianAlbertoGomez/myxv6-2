@@ -205,3 +205,8 @@ void            freepmem(void);
 //Christian Gomez Lab 3 Task 2
 void *mmap(void*,uint64,int,int,int,int);
 int munmap(uint64,uint64);
+
+//Semaphore Christian Gomez Lab 4 Task 2
+void seminit(void);
+int  semalloc(void);
+void semdealloc(int index);

@@ -33,6 +33,10 @@ int wait2(int*, struct rusage*);//This is my code
 int freepmem(void); //Lab 3 Task 1
 void *mmap(void*,uint64,int,int,int,int); //Christian Gomez Lab 3 Task 2
 int munmap(void*,uint64); //Christian Gomez Lab 3 Task 2
+int sem_init(sem_t* sem,int pshared, unsigned int value); //Christian Gomez Lab 4 task 1
+int sem_wait(sem_t* sem); //Christian Gomez Lab 4 task 1
+int sem_post(sem_t* sem); //Christian Gomez Lab 4 task 1
+int sem_destroy(sem_t* sem); //Christian Gomez Lab 4 task 1
 
 // ulib.c
 int stat(const char*, struct stat*);
